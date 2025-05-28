@@ -3,10 +3,11 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export type DBContext = SupabaseClient<any, "public", any>;
 
-export function toUser(session) {
+export function toUser(session: any) {
     return {
         email: session.user.email,
-        id: session.user.id
+        id: session.user.id,
+        username: session.user.user_metadata.username
     };
 }
 

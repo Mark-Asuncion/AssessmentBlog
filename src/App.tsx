@@ -16,7 +16,7 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
             <Routes>
-                <Route index element={<Index />} />
+                <Route index element={<Home />} />
                 <Route path="/login" element={<Index />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/register" element={<Register />} />

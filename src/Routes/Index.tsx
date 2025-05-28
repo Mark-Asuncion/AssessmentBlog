@@ -5,6 +5,7 @@ import { toUser, type DBContext } from '../ReduxSlice/DatabaseContext';
 import { Button, Grid, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { ErrText, PasswordField } from '../Components/PasswordField';
 import { set } from '../ReduxSlice/UserContext';
+import { autoLogin } from '../Utils/AutoLogin';
 
 
 export function Index() {
@@ -20,16 +21,12 @@ export function Index() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(dbContext !== null);
-        dbContext.auth.getSession()
-            .then((v) => {
-                console.log(v.data);
-                if (v.data.session.user != null) {
-                    dispatch(set(toUser(v.data.session)));
-                    navigate("/home");
-                }
-            })
-            .catch((e) => console.log(e)) ;
+        // console.log(dbContext !== null);
+        autoLogin(
+            navigate,
+            dbContext,
+            dispatch
+        );
     }, []);
 
     const onSubmit = useCallback(async (e) => {
@@ -78,8 +75,8 @@ export function Index() {
                     </div>
                     <form onSubmit={onSubmit} className="flex flex-col gap-4 w-100">
                         {(errorText.length !== 0) && <ErrText value={errorText} />}
-                        <TextField inputRef={refEmail} id="outlined-basic" label="Email" variant="outlined" />
-                        <PasswordField ref={refPass} label="Password" />
+                        <TextField tabIndex={0} inputRef={refEmail} id="outlined-basic" label="Email" variant="outlined" type="email" />
+                        <PasswordField tabIndex={1} ref={refPass} label="Password" />
                         <Button variant="contained" type="submit" loading={isLoading}>Sign in</Button>
                         <p>No account? <span style={{ color: theme.palette.primary.main }}
                             onClick={() => navigate("/register") }>Register</span></p>
