@@ -7,8 +7,6 @@ import { ErrText, PasswordField } from '../Components/PasswordField';
 import { set } from '../ReduxSlice/UserContext';
 import { autoLogin } from '../Utils/AutoLogin';
 
-
-
 type Fields = {
     email: string,
     username: string,
@@ -47,9 +45,9 @@ export function Register() {
     useEffect(() => {
         // console.log(dbContext !== null);
         autoLogin(
-            navigate,
             dbContext,
-            dispatch
+            dispatch,
+            navigate
         );
     }, []);
 

@@ -4,17 +4,28 @@ import type { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { set } from "../ReduxSlice/UserContext";
 
 export async function autoLogin(
-    navigate: NavigateFunction,
     dbContext: DBContext,
-    reduxDispatcher: Dispatch<UnknownAction>
+    reduxDispatcher: Dispatch<UnknownAction>,
+    navigate?: NavigateFunction,
+    successRoute: string = "/home"
 ) {
     try {
         const res = await dbContext.auth.getSession();
         if (res.data.session == null)
                 return;
 
+        console.log(res);
+        if (res.error) {
+            if (navigate)
+                navigate("/login")
+            reduxDispatcher(set(null));
+            throw res.error;
+        }
+
+
         reduxDispatcher(set(toUser(res.data.session)));
-        navigate("/home");
+        if (navigate && successRoute.length != 0)
+            navigate(successRoute);
     }
     catch (e) {
         console.log(e);

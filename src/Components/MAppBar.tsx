@@ -24,7 +24,7 @@ export function MAppBar({ title }) {
 
     return <AppBar position="static" className="mb-3">
         <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navigate("/")}>
                 {title}
             </Typography>
             { ( userInfo )? <div className="ml-auto">

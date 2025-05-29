@@ -1,28 +1,137 @@
-import { Button, Card, Divider, IconButton, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Card, Divider, IconButton, TextField, Tooltip, useTheme, useMediaQuery } from "@mui/material";
 import { useSelector } from 'react-redux';
 import { type User } from "../ReduxSlice/UserContext";
 import ImageIcon from '@mui/icons-material/Image';
 import { MAvatar } from "./Avatar";
 import { useNavigate } from "react-router-dom";
+import { BoldItalicUnderlineToggles, markdownShortcutPlugin, MDXEditor, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
+import { headingsPlugin, listsPlugin, quotePlugin, toolbarPlugin } from '@mdxeditor/editor'
+import '@mdxeditor/editor/style.css'
+import { useRef, useCallback, useState } from "react";
+import { ImageGrid } from "./ImageGrid";
+import { createBlog } from "../Utils/Blog";
+import { ErrText } from "./PasswordField";
+import type { DBContext } from "../ReduxSlice/DatabaseContext";
 
-export function PostEditor() {
+export function PostEditor({ blog = undefined }) {
+    blog;
     const userInfo = useSelector(state => state["UserContext"].value) as User;
+    const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
+
+    const theme = useTheme();
+    const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
+    const [ images, setImages ] = useState<string[]>([]);
+    const refEditor = useRef<MDXEditorMethods | null>(null);
+    const refFileInput = useRef(null);
+    const refTitle = useRef(null);
+    const [ isLoading, setIsLoading ] = useState(false);
+    const [ err, setErr ] = useState("");
+    const navigate = useNavigate();
+
+    const onAttachClick = useCallback((e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        refFileInput.current?.click();
+    }, []);
+
+    const onPost = useCallback(async (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsLoading(true);
+
+        const title = refTitle.current.value;
+        const content = refEditor.current.getMarkdown();
+        if (content.length == 0 || title.length == 0) {
+            setErr("Content or Title cannot be empty");
+            setIsLoading(false);
+            return;
+        }
+        try {
+            await createBlog(
+                dbContext,
+                userInfo,
+                {
+                    updated_at: new Date(Date.now()),
+                    title: title,
+                    content: content,
+                    images: images
+                }
+            );
+        }
+        catch(e) {
+            console.log(e);
+            setErr("");
+            setIsLoading(false);
+            return;
+        }
+        setErr("");
+        setIsLoading(false);
+        navigate("/");
+    }, [refEditor, images]);
 
     if (userInfo == null) {
         return <></>
     }
-    return <Card variant="elevation" className="py-2 px-4 rounded-lg">
+
+    const onFileChange = useCallback((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImages((v) => {
+                    return [
+                        ...v,
+                        reader.result as string
+                    ];
+                });
+            };
+            reader.readAsDataURL(file); // base64 encoding for preview
+        }
+    }, []);
+
+    return <Card variant="elevation" className={`m-auto py-2 px-4 rounded-lg ${(isBreakpointMdUp)? "w-[60%]":""}`}>
         <div className="flex flex-col gap-2">
-            <Typography variant="h5" component="div" className="mb-2">Create a post</Typography>
-            <TextField variant="outlined" label="Title" size="small"/>
+            {(err.length !== 0) && <ErrText value={err} />}
+            <TextField inputRef={refTitle} variant="outlined" label="Title" size="small"/>
             <Divider />
-            <TextField minRows={1} maxRows={7} variant="outlined" multiline size="small"/>
+            <MDXEditor
+                className="dark-theme border-solid border-1 border-gray-700 rounded-md"
+                markdown=""
+                ref={refEditor}
+                plugins={[
+                    headingsPlugin(),
+                    listsPlugin(),
+                    quotePlugin(),
+                    markdownShortcutPlugin(),
+                    toolbarPlugin({
+                        toolbarClassName: 'my-classname',
+                        toolbarContents: () => (
+                            <>
+                                <UndoRedo />
+                                <BoldItalicUnderlineToggles />
+                            </>
+                        )
+                    })
+                ]}
+            />
+            { (images.length > 0) && <ImageGrid images={images} setImages={setImages}/> }
             <div className="flex">
                 <Tooltip title="Attach an image">
-                    <IconButton><ImageIcon /></IconButton>
+                    <div>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={refFileInput}
+                        onChange={onFileChange}
+                        style={{ display: "none" }}
+                    />
+                    <IconButton onClick={onAttachClick}><ImageIcon /></IconButton>
+                    </div>
                 </Tooltip>
                 <div className="ml-auto">
-                    <Button variant="contained">Post</Button>
+                    <Button onClick={onPost} variant="contained" loading={isLoading}>Post</Button>
                 </div>
             </div>
         </div>

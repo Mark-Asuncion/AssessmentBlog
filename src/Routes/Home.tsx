@@ -7,10 +7,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { OpenPostEditor } from "../Components/PostEditor";
 import { MAvatar } from "../Components/Avatar";
 import { MAppBar } from "../Components/MAppBar";
+import { autoLogin } from "../Utils/AutoLogin";
+import { useDispatch, useSelector } from "react-redux";
+import type { DBContext } from "../ReduxSlice/DatabaseContext";
 
 export function Home() {
-    // const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
-    // const dispatch = useDispatch();
+    const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
+    const dispatch = useDispatch();
     // const navigate = useNavigate();
     // const userInfo = useSelector(state => state["UserContext"].value) as User;
     const theme = useTheme();
@@ -20,6 +23,10 @@ export function Home() {
         setArr((v) => {
             return v.map(() => crypto.randomUUID());
         });
+        autoLogin(
+            dbContext,
+            dispatch
+        );
     }, [])
 
     return <>

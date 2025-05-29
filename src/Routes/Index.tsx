@@ -23,9 +23,9 @@ export function Index() {
     useEffect(() => {
         // console.log(dbContext !== null);
         autoLogin(
-            navigate,
             dbContext,
-            dispatch
+            dispatch,
+            navigate
         );
     }, []);
 
