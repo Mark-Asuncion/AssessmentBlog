@@ -1,5 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+export type User = {
+    email: string,
+    id: string,
+    username: string
+};
+
 export const UserContextSlice = createSlice({
     name: 'UserContext',
     initialState: {

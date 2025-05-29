@@ -73,7 +73,7 @@ export function Index() {
                     <div className="mb-6">
                         <Typography variant="h4" className="text-center"> Login to your Account </Typography>
                     </div>
-                    <form onSubmit={onSubmit} className="flex flex-col gap-4 w-100">
+                    <form onSubmit={onSubmit} className="flex flex-col gap-4 w-100 p-4">
                         {(errorText.length !== 0) && <ErrText value={errorText} />}
                         <TextField tabIndex={0} inputRef={refEmail} id="outlined-basic" label="Email" variant="outlined" type="email" />
                         <PasswordField tabIndex={1} ref={refPass} label="Password" />
