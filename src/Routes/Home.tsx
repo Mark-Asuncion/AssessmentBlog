@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Button, Card, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { AppBar, Avatar, Button, Card, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { type DBContext } from '../ReduxSlice/DatabaseContext';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
@@ -77,10 +77,18 @@ export function Home() {
                 }
             </Toolbar>
         </AppBar>
-        <div className={`p-4 gap-2 flex flex-col justify-center m-auto${(isBreakpointMdUp)? " w-[60%]":""}`}>
+        <div className={`p-4 gap-2 flex flex-col justify-center m-auto ${(isBreakpointMdUp)? "w-[60%]":""}`}>
             <PostEditor />
             <Divider />
-            <PostItem />
+            <List className="w-[100%]">
+                {
+                    new Array(20).fill(null).map(() =>
+                        <ListItem>
+                            <PostItem key={crypto.randomUUID()} />
+                        </ListItem>
+                    )
+                }
+            </List>
         </div>
     </>
 }
@@ -127,7 +135,7 @@ function PostItem() {
         setAnchorEl(null);
     }, []);
 
-    return <Card variant="elevation" className="py-2 px-4 rounded-lg">
+    return <Card variant="elevation" className="py-2 px-4 rounded-lg w-[100%]">
         <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 mb-2">
                 <MAvatar user={{ id: "sdaskjd", email: "asdas", username: "sakdjask" }}/>
