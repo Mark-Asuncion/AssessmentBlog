@@ -6,6 +6,24 @@ export type User = {
     username: string
 };
 
+function isEqual(state, newU) {
+    // console.log(state, newU);
+    if (!state) {
+        return false;
+    }
+
+    if (state.email != newU.email) {
+        return false;
+    }
+    if (state.id != newU.id) {
+        return false;
+    }
+    if (state.username != newU.username) {
+        return false;
+    }
+    return true;
+}
+
 export const UserContextSlice = createSlice({
     name: 'UserContext',
     initialState: {
@@ -13,6 +31,9 @@ export const UserContextSlice = createSlice({
     },
     reducers: {
         set: (state, action) => {
+            if (isEqual(state.value, action.payload)) {
+                return;
+            }
             state.value = action.payload;
         }
     }
