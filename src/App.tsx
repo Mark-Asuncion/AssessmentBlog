@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from "@mui/material";
 import { Register } from "./Routes/Register";
 import { Home } from "./Routes/Home";
+import { Post } from "./Routes/Post";
 
 const darkTheme = createTheme({
   palette: {
@@ -20,7 +21,8 @@ function App() {
                 <Route path="/login" element={<Index />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="*" element={<Index />} />
+                <Route path="/post" element={<Post />} />
+                <Route path="*" element={<Home />} />
             </Routes>
         </BrowserRouter>
     </ThemeProvider>
