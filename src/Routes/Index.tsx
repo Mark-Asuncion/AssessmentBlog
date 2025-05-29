@@ -75,7 +75,7 @@ export function Index() {
                     </div>
                     <form onSubmit={onSubmit} className="flex flex-col gap-4 w-100 p-4">
                         {(errorText.length !== 0) && <ErrText value={errorText} />}
-                        <TextField tabIndex={0} inputRef={refEmail} id="outlined-basic" label="Email" variant="outlined" type="email" />
+                        <TextField tabIndex={0} inputRef={refEmail} id="outlined-basic" label="Email" variant="outlined" type="email" autoComplete='email' />
                         <PasswordField tabIndex={1} ref={refPass} label="Password" />
                         <Button variant="contained" type="submit" loading={isLoading}>Sign in</Button>
                         <p>No account? <span style={{ color: theme.palette.primary.main }}

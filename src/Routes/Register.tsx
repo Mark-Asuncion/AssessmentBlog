@@ -120,7 +120,7 @@ export function Register() {
                     </div>
                     <form onSubmit={onSubmit} className="flex flex-col gap-4 w-100 p-4">
                         {(errorText.length !== 0) && <ErrText value={errorText} />}
-                        <TextField inputRef={refEmail} tabIndex={0} id="outlined-basic" label="Email" variant="outlined" type="email" autoComplete="on"/>
+                        <TextField inputRef={refEmail} tabIndex={0} id="outlined-basic" label="Email" variant="outlined" type="email" autoComplete="email"/>
                         <TextField inputRef={refUsername} tabIndex={1} id="outlined-basic" label="Username" variant="outlined" />
                         <Divider />
                         <PasswordField ref={refPass} label="Password" tabIndex={2} />

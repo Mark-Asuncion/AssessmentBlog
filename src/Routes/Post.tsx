@@ -32,7 +32,7 @@ export function Post() {
     return <>
         <MAppBar title="Create a post" />
         <div className="p-2">
-            <PostEditor />
+            <PostEditor userInfo={userInfo} />
         </div>
     </>
 }

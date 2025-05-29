@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { signOut } from "../Utils/SignOut";
 import { type User } from "../ReduxSlice/UserContext";
 import { MAvatar } from "../Components/Avatar";
+import { HomeOutlined } from "@mui/icons-material";
 
 export function MAppBar({ title }) {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
@@ -24,6 +25,7 @@ export function MAppBar({ title }) {
 
     return <AppBar position="static" className="mb-3">
         <Toolbar>
+            <IconButton onClick={() => navigate("/")}><HomeOutlined /></IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navigate("/")}>
                 {title}
             </Typography>

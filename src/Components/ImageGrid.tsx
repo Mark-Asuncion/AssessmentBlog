@@ -2,16 +2,18 @@ import { ArrowBackIosSharp, ArrowForwardIosSharp, Close } from "@mui/icons-mater
 import { Card, IconButton, ImageList, ImageListItem, Modal, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 
-export function ImageGrid({ images, setImages }) {
+export function ImageGrid({ images, setImages = undefined, edit = false }) {
     const [ openImgId, setOpenImgId ] = useState(-1);
     const theme = useTheme();
     const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
+    // const byPair = [];
+
     return <div>
-        <ImageList cols={2} className="rounded-lg h-[300px]">
+        <ImageList cols={2} className={`rounded-lg ${(edit)? "h-[300px]":"h-full"}`}>
             {images.map((item: string, i) => (
                 <ImageListItem key={`${item}-${crypto.randomUUID()}`}>
-                    <IconButton onClick={(e) => {
+                    { edit && <IconButton onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setImages((imgs: string[]) => {
@@ -21,6 +23,7 @@ export function ImageGrid({ images, setImages }) {
                     }}
                         className="!absolute top-2 right-2"
                     ><Close /></IconButton>
+                    }
                     <img
                         onClick={(e) => {
                             e.preventDefault();

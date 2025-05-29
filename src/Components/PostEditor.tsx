@@ -13,9 +13,8 @@ import { createBlog } from "../Utils/Blog";
 import { ErrText } from "./PasswordField";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
 
-export function PostEditor({ blog = undefined }) {
+export function PostEditor({ blog = undefined, userInfo }) {
     blog;
-    const userInfo = useSelector(state => state["UserContext"].value) as User;
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
 
     const theme = useTheme();
@@ -69,10 +68,6 @@ export function PostEditor({ blog = undefined }) {
         navigate("/");
     }, [refEditor, images]);
 
-    if (userInfo == null) {
-        return <></>
-    }
-
     const onFileChange = useCallback((e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -116,7 +111,7 @@ export function PostEditor({ blog = undefined }) {
                     })
                 ]}
             />
-            { (images.length > 0) && <ImageGrid images={images} setImages={setImages}/> }
+            { (images.length > 0) && <ImageGrid images={images} setImages={setImages} edit={true}/> }
             <div className="flex">
                 <Tooltip title="Attach an image">
                     <div>
@@ -159,3 +154,17 @@ export function OpenPostEditor() {
     </Card>
 }
 
+
+export function MDXNonEditable({ content }) {
+    return <MDXEditor
+        className="dark-theme rounded-md"
+        markdown={content}
+        readOnly
+        plugins={[
+            headingsPlugin(),
+            listsPlugin(),
+            quotePlugin(),
+            markdownShortcutPlugin()
+        ]}
+    />
+}

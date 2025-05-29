@@ -1,33 +1,77 @@
-import { Card, Collapse, Divider, IconButton, List, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
-import { TransitionGroup } from "react-transition-group";
-import MoreHorizOutlined from "@mui/icons-material/MoreHorizOutlined";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { CircularProgress, Divider, List, ListItem, useMediaQuery, useTheme } from "@mui/material";
+import { useEffect, useState, useCallback } from "react";
 import { OpenPostEditor } from "../Components/PostEditor";
-import { MAvatar } from "../Components/Avatar";
 import { MAppBar } from "../Components/MAppBar";
 import { autoLogin } from "../Utils/AutoLogin";
 import { useDispatch, useSelector } from "react-redux";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
+import { type Blog, deleteBlog, getBlogs } from "../Utils/Blog";
+import type { User } from "../ReduxSlice/UserContext";
+import { BlogItem } from "../Components/PostItem";
+import { useInView } from "react-intersection-observer";
 
 export function Home() {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
     const dispatch = useDispatch();
     // const navigate = useNavigate();
-    // const userInfo = useSelector(state => state["UserContext"].value) as User;
+    const userInfo = useSelector(state => state["UserContext"].value) as User;
     const theme = useTheme();
     const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
-    const [arr, setArr] = useState(new Array(20).fill(null));
+
+    const [ blogs, setBlogs ] = useState<Blog[]>([]);
+    const [ pageOffset, setPageOffset ] = useState(0);
+
+    // pagination
+    const [ refLoader, inView, _ ] = useInView()
+
     useEffect(() => {
-        setArr((v) => {
-            return v.map(() => crypto.randomUUID());
-        });
+        if (!inView) {
+            return;
+        }
+        getBlogs( dbContext, pageOffset+1)
+            .then((blogs) => setBlogs((old) => {
+                return [
+                    ...old,
+                    ...blogs
+                ];
+            }));
+        setPageOffset(pageOffset+1);
+        console.log(pageOffset);
+    }, [inView])
+
+    useEffect(() => {
         autoLogin(
             dbContext,
             dispatch
         );
+
+        try {
+            getBlogs(
+                dbContext,
+                pageOffset
+            ).then((blogs) => setBlogs(blogs));
+        }
+        catch (e) {
+            console.log(e);
+        }
+
     }, [])
+
+    const deleteBlogById = useCallback(async (blogId: string) => {
+        try {
+            await deleteBlog(dbContext, blogId);
+            setBlogs((blogs) => {
+                return [
+                    ...blogs.filter(({ id }: Blog) => {
+                        return id !== blogId;
+                    })
+                ];
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }, []);
 
     return <>
         <MAppBar title="Blogs" />
@@ -35,87 +79,27 @@ export function Home() {
             <OpenPostEditor />
             <Divider />
             <List className="w-[100%]" role="listbox">
-                <TransitionGroup>
+                {/* <TransitionGroup> */}
+                {/* { */}
+                {/*     blogs.map((v) => */}
+                {/*         <Collapse key={v.id}> */}
+                {/*                 <BlogItem key={v.id} userInfo={userInfo} blog={v}/> */}
+                {/*         </Collapse> */}
+                {/*     ) */}
+                {/* } */}
+                {/* </TransitionGroup> */}
+
                 {
-                    arr.map((v) =>
-                        <Collapse key={v}>
-                            <div onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    setArr((ar) => {
-                                        return ar.filter((k) => {
-                                            return k !== v;
-                                        });
-                                    });
-                                }}>
-                            <ListItem
-                                    role="listitem" className="mb-2" sx={{padding: 0}}>
-                                <PostItem />
-                            </ListItem>
-                            </div>
-                        </Collapse>
+                    blogs.map((v) =>
+                        <BlogItem key={v.id} userInfo={userInfo} blog={v} deleteBlogById={deleteBlogById}/>
                     )
                 }
-                </TransitionGroup>
+                { (blogs.length >= 3) &&
+                    <ListItem role="listitem" className="w-full" sx={{padding: 0}}>
+                        <div ref={refLoader} className="flex justify-center m-auto"><CircularProgress /></div>
+                    </ListItem>
+                }
             </List>
         </div>
     </>
-}
-
-function PostItem() {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const handleMenuClick = useCallback((e) => {
-        setAnchorEl(e.currentTarget);
-    }, []);
-
-    const handleMenuClose = useCallback(() => {
-        setAnchorEl(null);
-    }, []);
-
-    return <Card variant="elevation" className="py-2 px-4 rounded-lg w-[100%]">
-        <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 mb-2">
-                <MAvatar user={{ id: "sdaskjd", email: "asdas", username: "sakdjask" }}/>
-                <div className="flex flex-col">
-                    <p className="text-lg">M</p>
-                    <p className="text-sm">{new Date(Date.now()).toUTCString()}</p>
-                </div>
-                <div className="ml-auto">
-                    <IconButton onClick={handleMenuClick}><MoreHorizOutlined /></IconButton>
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                    >
-                        <MenuItem onClick={handleMenuClose}>
-                            <ListItemIcon>
-                                <EditIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText>Edit</ListItemText>
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuClose}>
-                            <ListItemIcon>
-                                <DeleteIcon fontSize="small" color="error" />
-                            </ListItemIcon>
-                            <ListItemText>Delete</ListItemText>
-                        </MenuItem>
-                    </Menu>
-                </div>
-            </div>
-            <Typography variant="h6" component="div">Title</Typography>
-            <Divider />
-            <p>lorem ipsumasdksajdlaj</p>
-            {/* <img></img> */}
-        </div>
-    </Card>
 }
