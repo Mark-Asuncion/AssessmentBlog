@@ -14,11 +14,7 @@ export async function autoLogin(
         if (res.data.session == null)
                 return;
 
-        // console.log(res);
         if (res.error) {
-            if (navigate)
-                navigate("/login")
-            reduxDispatcher(set(null));
             throw res.error;
         }
         const user = toUser(res.data.session);
@@ -29,6 +25,9 @@ export async function autoLogin(
     }
     catch (e) {
         console.log(e);
+        if (navigate)
+            navigate("/login")
+        reduxDispatcher(set(null));
     }
 }
 

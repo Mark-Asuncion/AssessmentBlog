@@ -4,7 +4,7 @@ import { type User } from "../ReduxSlice/UserContext";
 import ImageIcon from '@mui/icons-material/Image';
 import { MAvatar } from "./Avatar";
 import { useNavigate } from "react-router-dom";
-import { BoldItalicUnderlineToggles, markdownShortcutPlugin, MDXEditor, thematicBreakPlugin, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
+import { BlockTypeSelect, BoldItalicUnderlineToggles, ListsToggle, markdownShortcutPlugin, MDXEditor, thematicBreakPlugin, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
 import { headingsPlugin, listsPlugin, quotePlugin, toolbarPlugin } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
 import { useRef, useCallback, useState, useEffect } from "react";
@@ -12,6 +12,9 @@ import { ImageGrid } from "./ImageGrid";
 import { createBlog, updateBlog, type Blog } from "../Utils/Blog";
 import { ErrText } from "./PasswordField";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
+
+import "@mdxeditor/editor/style.css";
+import "../Assets/MDXDark.css";
 
 export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userInfo: User}) {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
@@ -109,9 +112,11 @@ export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userIn
             {(err.length !== 0) && <ErrText value={err} />}
             <TextField inputRef={refTitle} variant="outlined" label="Title" size="small"/>
             <Divider />
+            <div>
             <MDXEditor
-                className="dark-theme border-solid border-1 border-gray-700 rounded-md"
+                className="dark-theme dark-editor"
                 markdown={ (blog)? blog.content:""}
+                contentEditableClassName="prose dark:prose-invert"
                 ref={refEditor}
                 plugins={[
                     headingsPlugin(),
@@ -125,11 +130,14 @@ export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userIn
                             <>
                                 <UndoRedo />
                                 <BoldItalicUnderlineToggles />
+                                <BlockTypeSelect />
+                                <ListsToggle />
                             </>
                         )
                     })
                 ]}
             />
+            </div>
             { (images.length > 0) && <ImageGrid images={images} setImages={setImages} edit={true}/> }
             <div className="flex">
                 <Tooltip title="Attach an image">
@@ -178,6 +186,7 @@ export function MDXNonEditable({ content }) {
     return <MDXEditor
         className="dark-theme rounded-md"
         markdown={content}
+        contentEditableClassName="prose dark:prose-invert"
         readOnly
         plugins={[
             headingsPlugin(),

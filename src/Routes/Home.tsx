@@ -65,13 +65,14 @@ export function Home() {
     const deleteBlogById = useCallback(async (blogId: string) => {
         try {
             await deleteBlog(dbContext, blogId);
-            setBlogs((blogs) => {
-                return [
-                    ...blogs.filter(({ id }: Blog) => {
-                        return id !== blogId;
-                    })
-                ];
-            });
+            try {
+                const blogs = await getBlogs(dbContext, 0);
+                setPageOffset(0);
+                setBlogs(blogs);
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
         catch (e) {
             console.log(e);
