@@ -28,15 +28,20 @@ export function Home() {
         if (!inView) {
             return;
         }
-        getBlogs( dbContext, pageOffset+1)
-            .then((blogs) => setBlogs((old) => {
-                return [
-                    ...old,
-                    ...blogs
-                ];
-            }));
-        setPageOffset(pageOffset+1);
         console.log(pageOffset);
+        getBlogs( dbContext, pageOffset+1)
+            .then((blogs) => {
+                if (blogs.length == 0) {
+                    return;
+                }
+                setPageOffset(pageOffset+1);
+                setBlogs((old) => {
+                    return [
+                        ...old,
+                        ...blogs
+                    ];
+                })
+            });
     }, [inView])
 
     useEffect(() => {

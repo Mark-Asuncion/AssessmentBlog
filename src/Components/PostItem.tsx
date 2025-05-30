@@ -9,8 +9,10 @@ import type { Blog } from "../Utils/Blog";
 import { ImageGrid } from "./ImageGrid";
 import { MDXNonEditable } from "./PostEditor";
 import { CloseSharp } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userInfo: User, deleteBlogById: (id: string) => void }) {
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const handleMenuClick = useCallback((e) => {
         setAnchorEl(e.currentTarget);
@@ -20,7 +22,26 @@ export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userI
     const theme = useTheme();
     const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
-    const date = blog.updated_at.toDateString();
+    let date = "";
+    const today = new Date(Date.now());
+    if (blog.updated_at.getMonth() == today.getMonth()) {
+        if (blog.updated_at.getDay() == today.getDay()) {
+            date = "Today";
+        }
+        else {
+            const diff = today.getDay() - blog.updated_at.getDay();
+            if (diff == 1) {
+                date = "Yesterday";
+            }
+            else {
+                date = blog.updated_at.toDateString();
+            }
+        }
+    }
+    else {
+        date = blog.updated_at.toDateString();
+    }
+
     const canEdit = userInfo != null && blog.user_id == userInfo.id;
 
     const handleMenuClose = useCallback(() => {
@@ -32,7 +53,7 @@ export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userI
         <Card variant="elevation" className="py-3 px-4 rounded-lg w-[100%]">
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2 mb-2">
-                    <RowAvatar userInfo={blog.Profiles as User} subtitle={date}/>
+                    <RowAvatar userInfo={blog.Profiles! as User} subtitle={date}/>
                     { canEdit && <div className="ml-auto">
                         <IconButton onClick={handleMenuClick}><MoreHorizOutlined /></IconButton>
                         <Menu
@@ -50,7 +71,10 @@ export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userI
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
                         >
-                            <MenuItem onClick={handleMenuClose}>
+                            <MenuItem onClick={() => {
+                                handleMenuClose();
+                                navigate(`/edit/${blog.id}`);
+                            }}>
                                 <ListItemIcon>
                                     <EditIcon fontSize="small" />
                                 </ListItemIcon>

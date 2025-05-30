@@ -4,28 +4,32 @@ import { type User } from "../ReduxSlice/UserContext";
 import ImageIcon from '@mui/icons-material/Image';
 import { MAvatar } from "./Avatar";
 import { useNavigate } from "react-router-dom";
-import { BoldItalicUnderlineToggles, markdownShortcutPlugin, MDXEditor, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
+import { BoldItalicUnderlineToggles, markdownShortcutPlugin, MDXEditor, thematicBreakPlugin, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
 import { headingsPlugin, listsPlugin, quotePlugin, toolbarPlugin } from '@mdxeditor/editor'
 import '@mdxeditor/editor/style.css'
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import { ImageGrid } from "./ImageGrid";
-import { createBlog } from "../Utils/Blog";
+import { createBlog, updateBlog, type Blog } from "../Utils/Blog";
 import { ErrText } from "./PasswordField";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
 
-export function PostEditor({ blog = undefined, userInfo }) {
-    blog;
+export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userInfo: User}) {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
 
     const theme = useTheme();
     const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
-    const [ images, setImages ] = useState<string[]>([]);
+    const [ images, setImages ] = useState<string[]>((blog)? blog.images:[]);
     const refEditor = useRef<MDXEditorMethods | null>(null);
     const refFileInput = useRef(null);
     const refTitle = useRef(null);
     const [ isLoading, setIsLoading ] = useState(false);
     const [ err, setErr ] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (blog)
+            refTitle.current.value = blog.title;
+    }, [refTitle.current])
 
     const onAttachClick = useCallback((e: any) => {
         e.preventDefault();
@@ -46,20 +50,34 @@ export function PostEditor({ blog = undefined, userInfo }) {
             return;
         }
         try {
-            await createBlog(
-                dbContext,
-                userInfo,
-                {
-                    updated_at: new Date(Date.now()),
-                    title: title,
-                    content: content,
-                    images: images
-                }
-            );
+            if (!blog) {
+                await createBlog(
+                    dbContext,
+                    userInfo,
+                    {
+                        updated_at: new Date(Date.now()),
+                        title: title,
+                        content: content,
+                        images: images
+                    }
+                );
+            }
+            else {
+                await updateBlog(
+                    dbContext,
+                    {
+                        id: blog.id,
+                        updated_at: new Date(Date.now()),
+                        title: title,
+                        content: content,
+                        images: images
+                    }
+                );
+            }
         }
         catch(e) {
             console.log(e);
-            setErr("");
+            setErr("Something went wrong. Please try again.");
             setIsLoading(false);
             return;
         }
@@ -93,12 +111,13 @@ export function PostEditor({ blog = undefined, userInfo }) {
             <Divider />
             <MDXEditor
                 className="dark-theme border-solid border-1 border-gray-700 rounded-md"
-                markdown=""
+                markdown={ (blog)? blog.content:""}
                 ref={refEditor}
                 plugins={[
                     headingsPlugin(),
                     listsPlugin(),
                     quotePlugin(),
+                    thematicBreakPlugin(),
                     markdownShortcutPlugin(),
                     toolbarPlugin({
                         toolbarClassName: 'my-classname',
@@ -163,6 +182,7 @@ export function MDXNonEditable({ content }) {
         plugins={[
             headingsPlugin(),
             listsPlugin(),
+            thematicBreakPlugin(),
             quotePlugin(),
             markdownShortcutPlugin()
         ]}

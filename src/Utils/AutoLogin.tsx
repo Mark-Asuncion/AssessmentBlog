@@ -14,16 +14,16 @@ export async function autoLogin(
         if (res.data.session == null)
                 return;
 
-        console.log(res);
+        // console.log(res);
         if (res.error) {
             if (navigate)
                 navigate("/login")
             reduxDispatcher(set(null));
             throw res.error;
         }
-
-
-        reduxDispatcher(set(toUser(res.data.session)));
+        const user = toUser(res.data.session);
+        // console.trace("user", user);
+        reduxDispatcher(set(user));
         if (navigate && successRoute.length != 0)
             navigate(successRoute);
     }

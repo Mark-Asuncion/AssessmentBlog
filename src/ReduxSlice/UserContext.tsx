@@ -8,7 +8,7 @@ export type User = {
 
 function isEqual(state, newU) {
     // console.log(state, newU);
-    if (!state) {
+    if (!state || !newU) {
         return false;
     }
 
