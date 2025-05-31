@@ -86,12 +86,7 @@ export function Index() {
             { isBreakpointMdUp &&
             <Grid size={4}>
                 <img src="https://contenthub-static.grammarly.com/blog/wp-content/uploads/2017/11/how-to-write-a-blog-post.jpeg" title="blog"
-                    style={{
-                        height: "100%",
-                        width: "100%",
-                        objectFit: "cover"
-                    }}
-                />
+                        className="h-full w-full object-cover" />
             </Grid>
             }
         </Grid>

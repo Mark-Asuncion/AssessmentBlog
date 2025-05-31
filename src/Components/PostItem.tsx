@@ -1,4 +1,4 @@
-import { Button, Card, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Button, Card, Divider, IconButton, ListItem, ListItemIcon, ListItemText, Menu, MenuItem, Modal, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 import MoreHorizOutlined from "@mui/icons-material/MoreHorizOutlined";
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,8 +19,6 @@ export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userI
     }, []);
 
     const [ openDelModal, setOpenDelModal ] = useState(false);
-    const theme = useTheme();
-    const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
     let date = "";
     const today = new Date(Date.now());
@@ -96,14 +94,13 @@ export function BlogItem({ blog, userInfo, deleteBlogById }: { blog: Blog, userI
                 <Typography variant="h6" component="div">{blog.title}</Typography>
                 <Divider />
                 <MDXNonEditable content={blog.content} />
-                <ImageGrid images={blog.images}/>
-                {/* <img></img> */}
+                { blog.images.length > 0 && <ImageGrid images={blog.images}/>}
             </div>
         </Card>
         <Modal
             open={openDelModal}
             onClose={() => setOpenDelModal(false)}
-            className={`p-2 m-auto ${(isBreakpointMdUp)? "w-[60%]":""}`}
+            className="p-2 m-auto md:w-[60%]"
         >
             <div className="flex flex-col items-center justify-center h-full" onClick={(e) => {
                 e.preventDefault();

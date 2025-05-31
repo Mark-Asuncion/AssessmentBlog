@@ -130,14 +130,19 @@ export async function createBlog(
 
 export async function getBlogs(
     dbContext: DBContext,
-    offset: number = 0
+    offset: number = 0,
+    userId?: string
 ): Promise<Blog[]> {
     const pageOffset = 3;
     const offs = offset*pageOffset;
-    const res = await dbContext.from("Blogs")
+    const query = dbContext.from("Blogs")
         .select("*, Profiles( * )")
         .order("updated_at", { ascending: false })
-        .range(offs, offs+(pageOffset-1)).throwOnError();
+        .range(offs, offs+(pageOffset-1))
+    if (userId) {
+        query.eq("user_id", userId);
+    }
+    const res = await query.throwOnError();
 
     if (res.data.length == 0) {
         return [];
@@ -186,9 +191,6 @@ export async function updateBlog(dbContext: DBContext, updated: UpdateBlog) {
         throw "not found";
     }
 
-    const old = res.data[0] as Blog;
-    old.content = Buffer.from(updated.content).toString("base64");
-
     const newImages = [];
     for (let i=0;i<updated.images.length;i++) {
         const img = updated.images[i];
@@ -218,6 +220,7 @@ export async function updateBlog(dbContext: DBContext, updated: UpdateBlog) {
         }
     }
 
+    // console.log(updated);
     const newUpdated: CreateBlog = {
         title: updated.title,
         content: Buffer.from(updated.content).toString("base64"),
@@ -229,4 +232,3 @@ export async function updateBlog(dbContext: DBContext, updated: UpdateBlog) {
         .update(newUpdated)
         .eq("id", updated.id).throwOnError();
 }
-

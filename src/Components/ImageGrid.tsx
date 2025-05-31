@@ -1,11 +1,9 @@
 import { ArrowBackIosSharp, ArrowForwardIosSharp, Close } from "@mui/icons-material";
-import { Card, IconButton, ImageList, ImageListItem, Modal, useMediaQuery, useTheme } from "@mui/material";
+import { Card, IconButton, ImageList, ImageListItem, Modal } from "@mui/material";
 import { useState } from "react";
 
 export function ImageGrid({ images, setImages = undefined, edit = false }) {
     const [ openImgId, setOpenImgId ] = useState(-1);
-    const theme = useTheme();
-    const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
     // const byPair = [];
 
@@ -41,19 +39,19 @@ export function ImageGrid({ images, setImages = undefined, edit = false }) {
         <Modal
             open={openImgId != -1}
             onClose={() => setOpenImgId(-1)}
-            className={`p-2 m-auto ${(isBreakpointMdUp)? "w-[60%]":""}`}
+            className="p-4 m-auto md:w-[60%]"
         >
-            <Card className="py-2">
+            <Card className="py-2 flex flex-col h-full">
                 <div className="flex justify-end px-2">
                     <IconButton onClick={() => setOpenImgId(-1)}><Close /></IconButton>
                 </div>
-                <div className="bg-black">
-                <img
-                    className="m-auto"
-                    src={images[openImgId]}
-                    alt={`image ${openImgId}`}
-                    loading="lazy"
-                />
+                <div className="bg-neutral-950 flex flex-col items-center grow">
+                    <img
+                        className="m-auto"
+                        src={images[openImgId]}
+                        alt={`image ${openImgId}`}
+                        loading="lazy"
+                    />
                 </div>
                 <div className="flex justify-center mt-2">
                     <IconButton onClick={() => setOpenImgId(openImgId-1)} disabled={openImgId-1 < 0}><ArrowBackIosSharp /></IconButton>

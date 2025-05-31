@@ -1,4 +1,4 @@
-import { Button, Card, Divider, IconButton, TextField, Tooltip, useTheme, useMediaQuery } from "@mui/material";
+import { Button, Card, Divider, IconButton, TextField, Tooltip } from "@mui/material";
 import { useSelector } from 'react-redux';
 import { type User } from "../ReduxSlice/UserContext";
 import ImageIcon from '@mui/icons-material/Image';
@@ -19,8 +19,6 @@ import "../Assets/MDXDark.css";
 export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userInfo: User}) {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
 
-    const theme = useTheme();
-    const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
     const [ images, setImages ] = useState<string[]>((blog)? blog.images:[]);
     const refEditor = useRef<MDXEditorMethods | null>(null);
     const refFileInput = useRef(null);
@@ -107,7 +105,7 @@ export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userIn
         }
     }, []);
 
-    return <Card variant="elevation" className={`m-auto py-2 px-4 rounded-lg ${(isBreakpointMdUp)? "w-[60%]":""}`}>
+    return <Card variant="elevation" className="m-auto py-2 px-4 rounded-lg md:w-[60%]">
         <div className="flex flex-col gap-2">
             {(err.length !== 0) && <ErrText value={err} />}
             <TextField inputRef={refTitle} variant="outlined" label="Title" size="small"/>

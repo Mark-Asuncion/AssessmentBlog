@@ -14,6 +14,7 @@ export function PasswordField({ label, ref, tabIndex = undefined, onChange=()=>{
                 input: {
                     endAdornment: <InputAdornment position="end">
                         <IconButton
+                            tabIndex={-1}
                             aria-label={
                                 (showPass) ? 'hide the password' : 'display the password'
                             }

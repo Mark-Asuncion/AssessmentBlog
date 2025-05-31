@@ -1,4 +1,4 @@
-import { CircularProgress, Divider, List, ListItem, useMediaQuery, useTheme } from "@mui/material";
+import { CircularProgress, Divider, List, ListItem } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import { OpenPostEditor } from "../Components/PostEditor";
 import { MAppBar } from "../Components/MAppBar";
@@ -15,8 +15,6 @@ export function Home() {
     const dispatch = useDispatch();
     // const navigate = useNavigate();
     const userInfo = useSelector(state => state["UserContext"].value) as User;
-    const theme = useTheme();
-    const isBreakpointMdUp = useMediaQuery(theme.breakpoints.up("md"));
 
     const [ blogs, setBlogs ] = useState<Blog[]>([]);
     const [ pageOffset, setPageOffset ] = useState(0);
@@ -81,7 +79,7 @@ export function Home() {
 
     return <>
         <MAppBar title="Blogs" />
-        <div className={`p-2 gap-2 flex flex-col justify-center m-auto ${(isBreakpointMdUp)? "w-[60%]":""}`}>
+        <div className="gap-2 flex flex-col justify-center md:w-[60%] m-2 md:m-auto">
             <OpenPostEditor />
             <Divider />
             <List className="w-[100%]" role="listbox">
