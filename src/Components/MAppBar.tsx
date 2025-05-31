@@ -32,7 +32,6 @@ export function MAppBar({ title }) {
             { ( userInfo )? <div className="ml-auto">
                 <IconButton
                     size="large"
-                    aria-label="account of current user"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
                     color="inherit"

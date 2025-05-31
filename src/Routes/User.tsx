@@ -39,7 +39,7 @@ export function MyPost() {
     }
 
     return <>
-        <MAppBar title={(userInfo)? "My Post":""} />
+        <MAppBar title={(userInfo && userInfo.id == obtUser.id)? "My Post":""} />
         <div className="gap-2 flex flex-col justify-center md:w-[60%] m-2 md:m-auto">
             <RowAvatar userInfo={obtUser} subtitle={obtUser.email} />
             <Divider />
