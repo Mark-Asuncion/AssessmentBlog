@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { autoLogin } from "../Utils/AutoLogin";
 import { useDispatch, useSelector } from "react-redux";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
-import type { User } from "../ReduxSlice/UserContext";
+import type { User } from "../Utils/User";
 import { getBlog } from "../Utils/Blog";
 import { CircularProgress } from "@mui/material";
 import { PostEditor } from "../Components/PostEditor";
@@ -45,8 +45,10 @@ export function Edit() {
             });
     }, [userInfo])
 
-    if (!userInfo) {
-        return <></>;
+    if (userInfo == null) {
+        return <div className="h-full w-full flex flex-col items-center">
+            <CircularProgress />
+        </div>
     }
     console.log(blog);
 

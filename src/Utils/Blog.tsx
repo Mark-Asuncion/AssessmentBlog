@@ -1,5 +1,5 @@
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
-import type { User } from "../ReduxSlice/UserContext";
+import type { User } from "../Utils/User";
 import { Buffer } from 'buffer';
 import { createHash } from "crypto";
 
@@ -139,7 +139,7 @@ export async function getBlogs(
         .select("*, Profiles( * )")
         .order("updated_at", { ascending: false })
         .range(offs, offs+(pageOffset-1))
-    if (userId) {
+    if (userId && userId.length > 0) {
         query.eq("user_id", userId);
     }
     const res = await query.throwOnError();

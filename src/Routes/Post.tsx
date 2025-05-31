@@ -5,7 +5,7 @@ import type { DBContext } from "../ReduxSlice/DatabaseContext";
 import { autoLogin } from "../Utils/AutoLogin";
 import { useEffect } from "react";
 import { CircularProgress } from "@mui/material";
-import type { User } from "../ReduxSlice/UserContext";
+import type { User } from "../Utils/User";
 import { useNavigate } from "react-router-dom";
 
 export function Post() {
@@ -24,7 +24,7 @@ export function Post() {
     }, [])
 
     if (userInfo == null) {
-        return <div className="h-full w-full flex-col items-center">
+        return <div className="h-full w-full flex flex-col items-center">
             <CircularProgress />
         </div>
     }

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import { signOut } from "../Utils/SignOut";
-import { type User } from "../ReduxSlice/UserContext";
+import { type User } from "../Utils/User";
 import { MAvatar } from "../Components/Avatar";
 import { HomeOutlined } from "@mui/icons-material";
 
@@ -55,7 +55,14 @@ export function MAppBar({ title }) {
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
                 >
-                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                    <MenuItem onClick={() => {
+                        handleMenuClose();
+                        navigate(`/user/${userInfo.username}`)
+                    }}>{userInfo.username}</MenuItem>
+                    <MenuItem onClick={() => {
+                        handleMenuClose();
+                        navigate("/post");
+                    }}>Create a blog</MenuItem>
                     <Divider />
                     <MenuItem onClick={() => {
                         handleMenuClose();

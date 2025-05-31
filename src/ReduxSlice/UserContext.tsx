@@ -1,11 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export type User = {
-    email: string,
-    id: string,
-    username: string
-};
-
 function isEqual(state, newU) {
     // console.log(state, newU);
     if (!state || !newU) {

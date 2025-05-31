@@ -1,5 +1,5 @@
 import { Avatar } from "@mui/material";
-import type { User } from "../ReduxSlice/UserContext";
+import type { User } from "../Utils/User";
 
 export function MAvatar({ user }) {
     const code = user.username.charCodeAt(0);

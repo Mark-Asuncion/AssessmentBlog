@@ -4,7 +4,7 @@ import MoreHorizOutlined from "@mui/icons-material/MoreHorizOutlined";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { RowAvatar } from "../Components/Avatar";
-import type { User } from "../ReduxSlice/UserContext";
+import type { User } from "../Utils/User";
 import type { Blog } from "../Utils/Blog";
 import { ImageGrid } from "./ImageGrid";
 import { MDXNonEditable } from "./PostEditor";
