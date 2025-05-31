@@ -1,6 +1,6 @@
 import { Button, Card, Divider, IconButton, TextField, Tooltip } from "@mui/material";
 import { useSelector } from 'react-redux';
-import { type User } from "../ReduxSlice/UserContext";
+import { type User } from "../Utils/User";
 import ImageIcon from '@mui/icons-material/Image';
 import { MAvatar } from "./Avatar";
 import { useNavigate } from "react-router-dom";
