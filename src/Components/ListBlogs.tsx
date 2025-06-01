@@ -1,4 +1,4 @@
-import { CircularProgress, List, ListItem } from "@mui/material";
+import { Box, CircularProgress, Fab, Fade, List, ListItem, useScrollTrigger } from "@mui/material";
 import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import type { DBContext } from "../ReduxSlice/DatabaseContext";
@@ -6,6 +6,40 @@ import { type Blog, deleteBlog, getBlogs } from "../Utils/Blog";
 import type { User } from "../Utils/User";
 import { BlogItem } from "../Components/PostItem";
 import { useInView } from "react-intersection-observer";
+import { KeyboardArrowUp } from "@mui/icons-material";
+
+function ScrollToTop() {
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 100,
+    });
+
+    const handleClick = useCallback((event) => {
+        const anchor = (
+            (event.target as HTMLDivElement).ownerDocument || document
+        ).querySelector("#top-anchor");
+
+        if (anchor) {
+            anchor.scrollIntoView({
+                block: 'center',
+            });
+        }
+    }, []);
+
+    return (
+        <Fade in={trigger}>
+            <Box
+                onClick={handleClick}
+                role="presentation"
+                className="!fixed bottom-8 right-8 md:right-24"
+            >
+                <Fab size="small" aria-label="scroll back to top">
+                    <KeyboardArrowUp />
+                </Fab>
+            </Box>
+        </Fade>
+    );
+}
 
 export function ListBlog({ userId = undefined }) {
     const dbContext = (useSelector(state => state["DatabaseContext"].value)) as DBContext;
@@ -62,7 +96,8 @@ export function ListBlog({ userId = undefined }) {
     }, []);
 
 
-    return <List className="w-[100%]" role="listbox">
+    return <>
+    <List className="w-[100%]" role="listbox">
         {
             blogs.map((v) =>
                 <BlogItem key={v.id} userInfo={userInfo} blog={v} deleteBlogById={deleteBlogById}/>
@@ -74,4 +109,6 @@ export function ListBlog({ userId = undefined }) {
             </ListItem>
         }
     </List>
+        <ScrollToTop />
+    </>
 }

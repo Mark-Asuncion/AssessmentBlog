@@ -23,7 +23,7 @@ export function MAppBar({ title }) {
         setAnchorEl(null);
     }, []);
 
-    return <AppBar position="static" className="mb-3">
+    return <AppBar position="static" className="mb-3" id="top-anchor">
         <Toolbar>
             <IconButton onClick={() => navigate("/")}><HomeOutlined /></IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navigate("/")}>
