@@ -2,7 +2,7 @@ import { Button, Card, Divider, IconButton, TextField, Tooltip } from "@mui/mate
 import { useSelector } from 'react-redux';
 import { type User } from "../Utils/User";
 import ImageIcon from '@mui/icons-material/Image';
-import { MAvatar } from "./Avatar";
+import { MAvatar, RowAvatar } from "./Avatar";
 import { useNavigate } from "react-router-dom";
 import { BlockTypeSelect, BoldItalicUnderlineToggles, ListsToggle, markdownShortcutPlugin, MDXEditor, thematicBreakPlugin, UndoRedo, type MDXEditorMethods } from '@mdxeditor/editor'
 import { headingsPlugin, listsPlugin, quotePlugin, toolbarPlugin } from '@mdxeditor/editor'
@@ -158,7 +158,7 @@ export function PostEditor({ blog = undefined, userInfo }: { blog?: Blog, userIn
     </Card>
 }
 
-export function OpenPostEditor() {
+export function OpenPostEditor({ fullInfo = false }) {
     const userInfo = useSelector(state => state["UserContext"].value) as User;
     const navigate = useNavigate();
 
@@ -170,8 +170,11 @@ export function OpenPostEditor() {
         navigate("/post");
     }}>
         <div className="flex gap-2 items-center">
-            {/* <Typography variant="h5" component="div" className="mb-2">Create a post</Typography> */}
-            <MAvatar user={userInfo}/>
+            {
+                (!fullInfo)?
+                <MAvatar user={userInfo}/>:
+                <RowAvatar userInfo={userInfo} subtitle={userInfo.email} />
+            }
             <Card variant="elevation" elevation={5} className="flex-grow self-center p-3" sx={{ borderRadius: 999, boxShadow: "none" }}>
                 <p>Create a post</p>
             </Card>

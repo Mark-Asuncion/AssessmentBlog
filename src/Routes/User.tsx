@@ -8,6 +8,7 @@ import { MAppBar } from "../Components/MAppBar";
 import { CircularProgress, Divider, Typography } from "@mui/material";
 import { RowAvatar } from "../Components/Avatar";
 import { ListBlog } from "../Components/ListBlogs";
+import { OpenPostEditor } from "../Components/PostEditor";
 
 export function MyPost() {
     const { username } = useParams();
@@ -41,7 +42,10 @@ export function MyPost() {
     return <>
         <MAppBar title={(userInfo && userInfo.id == obtUser.id)? "My Post":""} />
         <div className="gap-2 flex flex-col justify-center md:w-[60%] m-2 md:m-auto">
-            <RowAvatar userInfo={obtUser} subtitle={obtUser.email} />
+            {(userInfo && obtUser.id == userInfo.id)?
+                <OpenPostEditor fullInfo />
+                :<RowAvatar userInfo={obtUser} subtitle={obtUser.email} />
+            }
             <Divider />
             <Typography variant="h3" component="div">Posts</Typography>
             <ListBlog userId={obtUser.id} />
