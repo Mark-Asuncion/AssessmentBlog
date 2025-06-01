@@ -2,25 +2,33 @@ import { ArrowBackIosSharp, ArrowForwardIosSharp, Close } from "@mui/icons-mater
 import { Card, IconButton, ImageList, ImageListItem, Modal } from "@mui/material";
 import { useState } from "react";
 
+function shouldUseCol1(arrLen: number, currIndex: number, nextIndex: number) {
+    if (currIndex % 2 == 0 && nextIndex < arrLen) {
+        return true;
+    }
+    else if (currIndex % 2 == 1) {
+        return true;
+    }
+    return false;
+}
+
 export function ImageGrid({ images, setImages = undefined, edit = false }) {
     const [ openImgId, setOpenImgId ] = useState(-1);
 
-    // const byPair = [];
-
     return <div>
-        <ImageList cols={2} className={`rounded-lg ${(edit)? "h-[300px]":"h-full"}`}>
-            {images.map((item: string, i) => (
-                <ImageListItem key={`${item}-${crypto.randomUUID()}`}>
+        <ImageList cols={2} className={`rounded-lg ${(edit)? "h-[500px]":"h-full"}`}>
+            {images.map((link: string, i: number, arr: string[]) => (
+                <ImageListItem key={`${link}-${i}`} cols={(shouldUseCol1(arr.length, i, i+1))? 1:2}>
                     { edit && <IconButton onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setImages((imgs: string[]) => {
-                            const newImgs = imgs.filter((v) => v !== item)
+                            const newImgs = imgs.filter((v) => v !== link)
                             return [ ...newImgs ];
                         });
                     }}
                         className="!absolute top-2 right-2"
-                    ><Close /></IconButton>
+                    ><Close color="error"/></IconButton>
                     }
                     <img
                         onClick={(e) => {
@@ -29,8 +37,8 @@ export function ImageGrid({ images, setImages = undefined, edit = false }) {
                             setOpenImgId(i);
                         }}
                         className="h-full w-full object-cover"
-                        src={item}
-                        alt={`image ${i}`}
+                        src={link}
+                        alt={link}
                         loading="lazy"
                     />
                 </ImageListItem>

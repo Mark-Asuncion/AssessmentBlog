@@ -43,7 +43,7 @@ function getPublicUrl(dbContext: DBContext, name: string): string | null {
             return null;
         }
 
-        console.log("returned new link");
+        // console.log("returned new link");
         window.sessionStorage.setItem(name, JSON.stringify(cached));
     }
     else {
@@ -56,7 +56,7 @@ function getPublicUrl(dbContext: DBContext, name: string): string | null {
             return getPublicUrl(dbContext, name);
         }
 
-        console.log("returned cached link");
+        // console.log("returned cached link");
     }
     return cached.link;
 }
